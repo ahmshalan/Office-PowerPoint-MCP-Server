@@ -6,7 +6,7 @@ Consolidated version with 20 tools organized into multiple modules.
 import os
 import argparse
 from typing import Dict, Any
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 # import utils  # Currently unused
 from tools import (
