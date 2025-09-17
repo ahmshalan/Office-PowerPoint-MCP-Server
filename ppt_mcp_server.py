@@ -402,3 +402,49 @@ def get_server_info() -> Dict:
         ]
     }
     
+# ---- Main Function ----
+def main(transport: str = "stdio", port: int = 8000):
+    if transport == "http":
+        import asyncio
+        # Set the port for HTTP transport
+        app.settings.port = port
+        # Start the FastMCP server with HTTP transport
+        try:
+            app.run(transport='http', host='0.0.0.0')
+        except asyncio.exceptions.CancelledError:
+            print("Server stopped by user.")
+        except KeyboardInterrupt:
+            print("Server stopped by user.")
+        except Exception as e:
+            print(f"Error starting server: {e}")
+            
+    elif transport == "sse":
+        # Run the FastMCP server in SSE (Server Side Events) mode
+        app.run(transport='sse')
+        
+    else:
+        # Run the FastMCP server
+        app.run(transport='stdio')
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="MCP Server for PowerPoint manipulation using python-pptx")
+
+    parser.add_argument(
+        "-t",
+        "--transport",
+        type=str,
+        default="stdio",
+        choices=["stdio", "http", "sse"],
+        help="Transport method for the MCP server (default: stdio)"
+    )
+
+    parser.add_argument(
+        "-p",
+        "--port",
+        type=int,
+        default=8000,
+        help="Port to run the MCP server on (default: 8000)"
+    )
+    args = parser.parse_args()
+    main(args.transport, args.port)
