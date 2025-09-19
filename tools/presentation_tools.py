@@ -30,50 +30,7 @@ def register_presentation_tools(app: FastMCP, presentations: Dict, get_current_p
             "message": f"Created new presentation with ID: {id}",
             "slide_count": len(pres.slides)
         }
-
-    @app.tool()
-    def create_presentation_from_template(template_path: str, id: Optional[str] = None) -> Dict:
-        """Create a new PowerPoint presentation from a template file."""
-        # Check if template file exists
-        if not os.path.exists(template_path):
-            # Try to find the template by searching in configured directories
-            search_dirs = get_template_search_directories()
-            template_name = os.path.basename(template_path)
-            
-            for directory in search_dirs:
-                potential_path = os.path.join(directory, template_name)
-                if os.path.exists(potential_path):
-                    template_path = potential_path
-                    break
-            else:
-                env_path_info = f" (PPT_TEMPLATE_PATH: {os.environ.get('PPT_TEMPLATE_PATH', 'not set')})" if os.environ.get('PPT_TEMPLATE_PATH') else ""
-                return {
-                    "error": f"Template file not found: {template_path}. Searched in {', '.join(search_dirs)}{env_path_info}"
-                }
         
-        # Create presentation from template
-        try:
-            pres = ppt_utils.create_presentation_from_template(template_path)
-        except Exception as e:
-            return {
-                "error": f"Failed to create presentation from template: {str(e)}"
-            }
-        
-        # Generate an ID if not provided
-        if id is None:
-            id = f"presentation_{len(presentations) + 1}"
-        
-        # Store the presentation
-        presentations[id] = pres
-        
-        return {
-            "presentation_id": id,
-            "message": f"Created new presentation from template '{template_path}' with ID: {id}",
-            "template_path": template_path,
-            "slide_count": len(pres.slides),
-            "layout_count": len(pres.slide_layouts)
-        }
-
     @app.tool()
     def open_presentation(file_path: str, id: Optional[str] = None) -> Dict:
         """Open an existing PowerPoint presentation from a file."""
@@ -148,31 +105,6 @@ def register_presentation_tools(app: FastMCP, presentations: Dict, get_current_p
                 "error": f"Failed to get presentation info: {str(e)}"
             }
 
-    @app.tool()
-    def get_template_file_info(template_path: str) -> Dict:
-        """Get information about a template file including layouts and properties."""
-        # Check if template file exists
-        if not os.path.exists(template_path):
-            # Try to find the template by searching in configured directories
-            search_dirs = get_template_search_directories()
-            template_name = os.path.basename(template_path)
-            
-            for directory in search_dirs:
-                potential_path = os.path.join(directory, template_name)
-                if os.path.exists(potential_path):
-                    template_path = potential_path
-                    break
-            else:
-                return {
-                    "error": f"Template file not found: {template_path}. Searched in {', '.join(search_dirs)}"
-                }
-        
-        try:
-            return ppt_utils.get_template_info(template_path)
-        except Exception as e:
-            return {
-                "error": f"Failed to get template info: {str(e)}"
-            }
 
     @app.tool()
     def set_core_properties(

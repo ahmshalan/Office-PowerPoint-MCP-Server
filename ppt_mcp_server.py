@@ -14,7 +14,6 @@ from tools import (
     register_content_tools,
     register_structural_tools,
     register_professional_tools,
-    register_template_tools,
     register_hyperlink_tools,
     register_chart_tools,
     register_connector_tools,
@@ -257,12 +256,6 @@ register_structural_tools(
 )
 
 register_professional_tools(
-    app,
-    presentations,
-    get_current_presentation_id
-)
-
-register_template_tools(
     app,
     presentations,
     get_current_presentation_id
